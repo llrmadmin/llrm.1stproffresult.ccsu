@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LLRM Medical College - Result Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#0b63b6;
+    --accent:#0ea37b;
+    --paper:#fff;
+    --muted:#6b7280;
+    --card-radius:12px;
+    --shadow: 0 12px 30px rgba(3,20,60,0.12);
+  }
+  *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  body{margin:0;background:linear-gradient(180deg,#f1f7fb 0%, #eaf4ff 50%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px;}
+  .app{width:980px;max-width:98%;display:grid;grid-template-columns:440px 1fr;gap:20px}
+
+  .card{background:var(--paper);border-radius:var(--card-radius);box-shadow:var(--shadow);padding:20px}
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .logo-wrap{width:64px;height:64px;border-radius:10px;background:#eef7ff;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #e6f2ff}
+  #logoImg{width:64px;height:64px;object-fit:cover;display:block}
+  h1{font-size:18px;margin:0;color:var(--primary)}
+  .meta{font-size:13px;color:var(--muted)}
+
+  label{display:block;font-size:13px;color:#333;margin-top:12px}
+  input[type=text], input[type=date], select{width:100%;padding:10px;border-radius:10px;border:1px solid #dbe7f5;margin-top:6px;font-size:14px}
+  .actions{display:flex;gap:10px;margin-top:16px;align-items:center}
+  button{background:var(--primary);color:#fff;border:none;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+  button.ghost{background:transparent;color:var(--primary);border:1px solid #cfe4fb}
+  small{color:var(--muted);display:block;margin-top:10px}
+
+  .result-wrap{background:transparent;border-radius:var(--card-radius);padding:16px;display:flex;align-items:center;justify-content:center}
+  .result-card{width:100%;background:linear-gradient(180deg,#ffffff, #fbfdff);border-radius:12px;padding:18px;border:1px solid #eef6ff;box-shadow:0 8px 20px rgba(3,20,60,0.06)}
+  .result-head{display:flex;justify-content:space-between;align-items:center}
+  .inst{display:flex;gap:12px;align-items:center}
+  .student{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;border-top:1px dashed #eef6ff;padding-top:14px}
+  .marks{margin-top:14px;display:flex;gap:14px;align-items:center}
+  .marks .big{background:linear-gradient(180deg,#fff,#f7fbff);padding:16px;border-radius:10px;flex:0 0 45%;text-align:center;border:1px solid #e6f0ff}
+  .marks .big .score{font-size:34px;font-weight:800;color:var(--primary)}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  table td{padding:8px;border-bottom:1px dashed #f0f6ff;font-size:13px}
+  .footer-row{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+  .btn-proc{background:var(--accent);border:none;padding:10px 14px;border-radius:10px;color:#fff;font-weight:700;cursor:pointer}
+  .note{font-size:13px;color:var(--muted);margin-top:8px}
+
+  /* modal */
+  .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.55);z-index:60;backdrop-filter:blur(2px)}
+  .overlay-card{background:#fff;padding:18px;border-radius:12px;max-width:760px;width:94%;box-shadow:var(--shadow);text-align:center}
+  .overlay-card img{max-width:100%;height:auto;border-radius:8px}
+  .overlay-actions{display:flex;gap:8px;justify-content:center;margin-top:12px}
+  .hidden{display:none}
+
+  @media (max-width:960px){.app{grid-template-columns:1fr;gap:12px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- LEFT: input + logo -->
+  <div class="card">
+    <div class="brand">
+      <div class="logo-wrap" title="Add a logo file named logo.png to the repo or upload below">
+        <!-- Default logo file expected: logo.png (place in repo root). If absent, fallback to letter L. -->
+        <img id="logoImg" src="logo.png" alt="logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2264%22 height=%2264%22><rect rx=10 width=%2264%22 height=%2264%22 fill=%22%23eef7ff%22/><text x=%2232%22 y=%2238%22 font-size=%2230%22 text-anchor=%22middle%22 fill=%22%230b63b6%22 font-family=%22Inter,Arial%22> L</text></svg>';" />
+      </div>
+      <div>
+        <h1>LLRM Medical College</h1>
+        <div class="meta">Official Result Portal — First Professional MBBS</div>
+      </div>
+    </div>
+
+    
+    <label style="margin-top:14px">Roll Number</label>
+    <input id="roll" type="text" placeholder="e.g., 231045" autocomplete="off" />
+
+    <label>Date of Birth</label>
+    <input id="dob" type="date" />
+
+    <label>Exam Session</label>
+    <select id="session">
+      <option value="Jan-2025">Jan 2025</option>
+      <option value="May-2025">May 2025</option>
+      <option value="Sep-2025">Sep 2025</option>
+    </select>
+
+    <div class="actions">
+      <button id="viewBtn">View Result</button>
+      
+
+  <!-- RIGHT: result display (realistic) -->
+  <div class="result-wrap">
+    <div class="result-card" id="resultCard" aria-live="polite">
+      <div class="result-head">
+        <div class="inst" style="align-items:center">
+          <div style="width:48px;height:48px;border-radius:8px;background:#eef7ff;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary)">LLRM</div>
+          <div>
+            <div style="font-weight:700;color:var(--primary);font-size:15px">LLRM Medical College</div>
+            <div class="meta">Affiliated to CCS University</div>
+          </div>
+        </div>
+        <div class="meta" id="sessionLabel">Session: -</div>
+      </div>
+
+      <div class="student" id="studentBlock">
+        <div class="item"><strong>Roll No:</strong> <span id="sroll">-</span></div>
+        <div class="item"><strong>Registration No:</strong> <span id="sreg">-</span></div>
+
+        <div class="item"><strong>Name:</strong> <span id="sname">-</span></div>
+        <div class="item"><strong>DOB:</strong> <span id="sdob">-</span></div>
+
+        <div class="item"><strong>College:</strong> <span id="scollege">LLRM Medical College</span></div>
+        <div class="item"><strong>Category:</strong> <span id="scat">General</span></div>
+      </div>
+
+      <div class="marks">
+        <div class="big">
+          <div class="meta">Total Marks</div>
+          <div class="score" id="score">-</div>
+          <div class="meta" id="percentage">- %</div>
+        </div>
+
+        <div class="details">
+          <table>
+            <tr><td>Anatomy</td><td id="m1">-</td></tr>
+            <tr><td>Physiology</td><td id="m2">-</td></tr>
+            <tr><td>Biochemistry</td><td id="m3">-</td></tr>
+            <tr><td><strong>Result</strong></td><td id="resText"><strong>-</strong></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer-row">
+        <div>
+          <div class="note">Controller of Examinations</div>
+          <div style="font-size:12px;color:var(--muted)">Date: <span id="pubDate">-</span></div>
+        </div>
+        <div>
+          <button id="procBtn" class="btn-proc" disabled>Proceed</button>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:10px">Tip: After viewing the result, click <strong>Proceed</strong> to continue.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: image-based reveal (hidden initially) -->
+<div id="overlay" class="hidden" role="dialog" aria-modal="true">
+  <div class="overlay-card">
+    <!-- The image shown when revealing the prank. Default file name expected: fool.png -->
+    <img id="foolImg" src="fool.png" alt="You've been fooled" onerror="this.onerror=null; this.style.display='none'; document.getElementById('foolFallback').style.display='block'">
+    <div id="foolFallback" class="hidden" style="padding:10px">
+      <!-- fallback content if image file missing -->
+      <h2 style="color:#d32f2f;margin:8px 0">You've been fooled!</h2>
+      <p style="color:#333">This page was a harmless prank demo — no official result was fetched.</p>
+    </div>
+
+    <!-- small file picker for testing upload of reveal image locally (optional) -->
+    <div style="margin-top:12px">
+      <input id="revealFile" type="file" accept="image/*" />
+    </div>
+
+    <div class="overlay-actions">
+      <button id="closeBtn">Close</button>
+      <button class="ghost" id="copyApology">Copy apology text</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---- small deterministic hash so same input -> same marks ----
+  function hashToInt(str, max) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+    }
+    return (h >>> 0) % max;
+  }
+
+  // demo fill
+  document.getElementById('demoBtn').addEventListener('click', () => {
+    document.getElementById('roll').value = '231045';
+    document.getElementById('dob').value = '2005-06-15';
+    document.getElementById('session').value = 'Jan-2025';
+  });
+
+  // logo upload preview (optional local testing)
+  document.getElementById('logoFile').addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const url = URL.createObjectURL(f);
+    document.getElementById('logoImg').src = url;
+  });
+
+  // reveal image upload preview (optional local testing)
+  document.getElementById('revealFile').addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const url = URL.createObjectURL(f);
+    const img = document.getElementById('foolImg');
+    img.src = url;
+    img.style.display = 'block';
+    document.getElementById('foolFallback').style.display = 'none';
+  });
+
+  // view result
+  document.getElementById('viewBtn').addEventListener('click', () => {
+    const roll = document.getElementById('roll').value.trim();
+    const dob = document.getElementById('dob').value;
+    const session = document.getElementById('session').value;
+    if (!roll || !dob) { alert('Please enter both Roll Number and Date of Birth.'); return; }
+
+    const seed = roll + '|' + dob;
+    const m1 = 50 + hashToInt(seed + 'A', 51);
+    const m2 = 50 + hashToInt(seed + 'B', 51);
+    const m3 = 50 + hashToInt(seed + 'C', 51);
+    const total = m1 + m2 + m3;
+    const percentage = (total / 300 * 100).toFixed(2);
+    const resText = (m1 < 35 || m2 < 35 || m3 < 35) ? 'Fail' : (percentage >= 60 ? 'Passed with Distinction' : (percentage >= 50 ? 'Passed' : 'Passed (Supplementary)'));
+    const firstNames = ['Amit','Vikas','Rohan','Neha','Pooja','Sakshi','Vivek','Riya','Ankit','Kavita'];
+    const lastNames = ['Sharma','Verma','Gupta','Singh','Kumar','Agarwal','Chauhan','Yadav','Saxena','Jain'];
+    const name = firstNames[hashToInt(seed+'N1', firstNames.length)] + ' ' + lastNames[hashToInt(seed+'N2', lastNames.length)];
+    const reg = 'REG' + (100000 + hashToInt(seed+'REG', 900000));
+    const pub = new Date().toLocaleDateString();
+
+    document.getElementById('sroll').textContent = roll;
+    document.getElementById('sreg').textContent = reg;
+    document.getElementById('sname').textContent = name;
+    document.getElementById('sdob').textContent = new Date(dob).toLocaleDateString();
+    document.getElementById('sessionLabel').textContent = 'Session: ' + session;
+    document.getElementById('m1').textContent = m1 + ' / 100';
+    document.getElementById('m2').textContent = m2 + ' / 100';
+    document.getElementById('m3').textContent = m3 + ' / 100';
+    document.getElementById('score').textContent = total + ' / 300';
+    document.getElementById('percentage').textContent = percentage;
+    document.getElementById('resText').innerHTML = '<strong>' + resText + '</strong>';
+    document.getElementById('pubDate').textContent = pub;
+
+    // enable Proceed and bind to show reveal modal
+    const proc = document.getElementById('procBtn');
+    proc.disabled = false;
+    proc.onclick = () => showRevealModal(name);
+  });
+
+  // show modal with reveal image
+  function showRevealModal(studentName) {
+    // before showing, set a default apology text (but only show image in modal)
+    const apology = `Hey ${studentName},\n\nThis was just a harmless prank webpage — no official result was fetched. Sorry if this surprised you. Please forgive the prank! — from your friend.`;
+    document.getElementById('copyApology').dataset.apology = apology;
+
+    const overlay = document.getElementById('overlay');
+    // if image missing, fallback content will appear (see onerror)
+    overlay.classList.remove('hidden');
+    overlay.style.display = 'flex';
+  }
+
+  // close modal
+  document.getElementById('closeBtn').addEventListener('click', () => {
+    const overlay = document.getElementById('overlay');
+    overlay.classList.add('hidden');
+    overlay.style.display = 'none';
+  });
+
+  // copy apology text button (optional)
+  document.getElementById('copyApology').addEventListener('click', async (e) => {
+    const text = e.target.dataset.apology || 'Sorry — this was a prank.';
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('Apology copied to clipboard — you can paste and send it.');
+      document.getElementById('overlay').classList.add('hidden');
+      document.getElementById('overlay').style.display = 'none';
+    } catch (err) {
+      alert('Copy failed. Please select and copy manually.');
+    }
+  });
+
+  // Prevent Enter key from submitting anything and refreshing page
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') ev.preventDefault();
+  });
+</script>
+</body>
+  </html>
